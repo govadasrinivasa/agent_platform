@@ -1,0 +1,42 @@
+@startuml
+actor User
+participant "AgentController" as AC
+participant "WorkflowEngine" as WE
+participant "AgentExecutor" as AE
+participant "Retriever (RAG)" as R
+participant "VectorStore" as VS
+participant "AgentRuntime" as AR
+participant "LLMClient (Ollama)" as LLM
+participant "ToolRegistry" as TR
+participant "CalculatorTool" as CT
+participant "MemoryManager" as MM
+
+User -> AC : submitQuery(query)
+AC -> WE : execute(context)
+WE -> AE : execute(context)
+
+AE -> R : retrieve(query)
+R -> VS : search(query)
+VS --> R : topKDocs
+R --> AE : contextDocs
+
+AE -> AR : run(context)
+
+AR -> LLM : generate(prompt)
+LLM --> AR : response
+
+alt Tool Required
+    AR -> TR : get("calculator")
+    TR --> AR : CalculatorTool
+    AR -> CT : execute(expression)
+    CT --> AR : result
+end
+
+AR -> MM : store(result)
+MM --> AR : ok
+
+AR --> AE : finalOutput
+AE --> WE : finalOutput
+WE --> AC : finalOutput
+AC --> User : response
+@enduml 

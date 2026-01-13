@@ -1,0 +1,32 @@
++------------------+
+| AgentController  |
++------------------+
+        |
+        v
++------------------+
+| WorkflowEngine   |
++------------------+
+        |
+        v
++------------------+
+| AgentExecutor    |
++------------------+
+        |
+        v
++------------------+
+| AgentRuntime     |
+|------------------|
+| - llm            |
+| - toolRegistry   |
++------------------+
+   |        |        \
+   v        v         v
+LLMClient ToolRegistry MemoryManager
+              |
+              v
+           Tool (abstract)
+              |
+              v
+        CalculatorTool
+
+AgentExecutor --> Retriever --> VectorStore

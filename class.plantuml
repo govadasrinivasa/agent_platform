@@ -1,0 +1,65 @@
+@startuml
+
+class AgentController {
+  +run_agent(context)
+}
+
+class WorkflowEngine {
+  +execute(context)
+}
+
+class AgentExecutor {
+  +execute(context)
+}
+
+class AgentRuntime {
+  -llm: LLMClient
+  -toolRegistry: ToolRegistry
+  +run(context)
+}
+
+class LLMClient {
+  +generate(prompt): String
+}
+
+class ToolRegistry {
+  +register(tool)
+  +get(name): Tool
+}
+
+abstract class Tool {
+  +name
+  +execute(input): String
+}
+
+class CalculatorTool {
+  +execute(input): String
+}
+
+class MemoryManager {
+  +store(entry)
+  +recall(): List
+}
+
+class Retriever {
+  +retrieve(query): List
+}
+
+class VectorStore {
+  +add(content)
+  +search(query): List
+}
+
+AgentController --> WorkflowEngine
+WorkflowEngine --> AgentExecutor
+AgentExecutor --> AgentRuntime
+AgentRuntime --> LLMClient
+AgentRuntime --> ToolRegistry
+AgentRuntime --> MemoryManager
+AgentExecutor --> Retriever
+Retriever --> VectorStore
+
+ToolRegistry --> Tool
+Tool <|-- CalculatorTool
+
+@enduml

@@ -1,0 +1,29 @@
+User
+  |
+  v
+AgentController
+  |
+  v
+WorkflowEngine
+  |
+  v
+AgentExecutor
+  |
+  v
+Retriever ----> VectorStore
+  |
+  v
+AgentRuntime
+  |
+  v
+LLMClient (Ollama)
+  |
+ [TOOL?]
+  |
+ToolRegistry --> CalculatorTool
+  |
+  v
+MemoryManager
+  |
+  v
+User Response
