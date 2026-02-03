@@ -1,27 +1,31 @@
+from mcp.schema import ContextRequest
+
 class AgentRuntime:
-    def __init__(self, llm, tool_registry):
+    def __init__(self, llm, mcp_server):
         self.llm = llm
-        self.tool_registry = tool_registry
+        self.mcp = mcp_server
 
-    def run(self, context):
+    def run(self, agent_id: str, query: str):
+        context = self.mcp.get_context(
+            ContextRequest(agent_id, query)
+        )
+
         prompt = f"""
-        You are an AI agent.
+You are a cloud migration expert.
 
-        RULES:
-        - If a calculation is required, respond EXACTLY as:
-        TOOL:calculator:<expression>
-        - Otherwise, respond with plain text.
-        Context: {context.knowledge}
-        Memory: {context.memory}
-        Question: {context.query}
-        """
-        output = self.llm.generate(prompt)
+Azure Migrate Discovery:
+{context.sections['azure_migrate']}
 
-        if output.startswith("TOOL:"):
-            _, tool_name, tool_input=output.split(":",2)
-            tool = self.tool_registry.get(tool_name)
-            if not tool:
-                return f"Tool {tool_name} not found"
-            return tool.execute(tool_input)
-        
-        return output
+Historical Knowledge:
+{context.sections['rag_knowledge']}
+
+Conversation Memory:
+{context.sections['memory']}
+
+User Question:
+{query}
+
+Provide migration guidance.
+"""
+
+        return self.llm.generate(prompt)

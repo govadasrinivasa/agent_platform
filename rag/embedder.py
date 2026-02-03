@@ -15,4 +15,4 @@ class Embedder:
             timeout=60
         )
         response.raise_for_status()
-        return response.json()["embeddings"]
+        return response.json()["embedding"]
